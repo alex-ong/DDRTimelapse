@@ -1,28 +1,38 @@
 from FileCapture import ImageCapture, NextFrame
 from PIL import Image
+import read_digits
+
 import sys
 def crop(img, rect):
     return img.crop(rect)    
-items = ["0","1","2","3","4","5","6","7","8","9","null"]
 
-images = {}
-for i in items:
-    images[i] = Image.open("images/"+i+".png")
     
 if __name__ == '__main__':
-    frameCount = 0
-    filename = "test.mp4"
+    
+    filename = "test3.mp4"
     rect = [0,0,1280,720]
     textRect = [238,249,238+71,249+14]
     img = ImageCapture(rect,filename)
+    lastNumber = -1
+    
+    oframeCount = 0
+    oframeNumbers = []
+    
     while True:
-        canProcess, frameNumber,vidframeCount = NextFrame()
-        if (frameNumber % 1000 == 0):
-            print(frameNumber,vidframeCount)
+        canProcess, vidframeNumber,vidframeCount = NextFrame()
+        
         if not canProcess:
             break    
-        if frameNumber >= 40000:
-            img = ImageCapture(rect)
-            words = crop(img,textRect)
-            words.show()
-            sys.exit()
+        
+        img = ImageCapture(rect)
+        words = crop(img,textRect)                    
+        words = words.resize((500,100))
+        num = read_digits.extract_digits(words, "cachekey")
+        if num != lastNumber:
+            lastNumber = num                                  
+            oframeCount += 1
+            oframeNumbers.append(oframeCount)
+            img.save("output/" + "{:05d}".format(oframeCount)+ ".png")
+    print("done!")
+    with open("output/frameNumber.txt", 'w') as f:
+        f.writelines("\n".join(soframeNumbers))
