@@ -35,7 +35,6 @@ if __name__ == '__main__':
     for frame in frames:
         start = int(framerate*frame)
         clip = sound[start:start+16]
-        print(len(clip))
         if result is None:
             result = clip
         else:
