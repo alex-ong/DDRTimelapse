@@ -26,6 +26,10 @@ if __name__ == '__main__':
         
     rect = [0,0,1280,720]
     textRect = [238,249,238+71,249+14]
+    textRect2 = [224,405, 224+68, 405+13]
+    if len(sys.argv) >= 3 and sys.argv[2] == "nopad":
+        textRect = textRect2
+        
     img = ImageCapture(rect,filename)
     lastNumber = -1
     
