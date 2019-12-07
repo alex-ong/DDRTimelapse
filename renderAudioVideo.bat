@@ -1,4 +1,4 @@
-ffmpeg -i test.mp4 -vn -b:a 320k test.wav
-call parseVideo.py
-call parseAudio.py
-ffmpeg -i audio.wav -r 60 -i output/%%05d.png final.mp4
+ffmpeg -i %1.mp4 -vn -b:a 320k %1.wav
+call parseVideo.py %1
+call parseAudio.py %1
+ffmpeg -i %1_processed.wav -r 60 -i %1/%%05d.png %1_processed.mp4
