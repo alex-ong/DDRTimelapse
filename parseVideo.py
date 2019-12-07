@@ -3,13 +3,19 @@ from PIL import Image
 import read_digits
 
 import sys
+import os
+
 def crop(img, rect):
     return img.crop(rect)    
 
     
 if __name__ == '__main__':
-    
-    filename = "test3.mp4"
+    try:
+        os.mkdir("output")
+    except:
+        pass
+        
+    filename = "test.mp4"
     rect = [0,0,1280,720]
     textRect = [238,249,238+71,249+14]
     img = ImageCapture(rect,filename)
@@ -31,8 +37,9 @@ if __name__ == '__main__':
         if num != lastNumber:
             lastNumber = num                                  
             oframeCount += 1
-            oframeNumbers.append(oframeCount)
+            oframeNumbers.append(vidframeNumber)
             img.save("output/" + "{:05d}".format(oframeCount)+ ".png")
-    print("done!")
-    with open("output/frameNumber.txt", 'w') as f:
-        f.writelines("\n".join(soframeNumbers))
+    
+    oframeNumbers = (str(i) for i in oframeNumbers)
+    with open("frameNumber.txt", 'w') as f:
+        f.writelines("\n".join(oframeNumbers))
