@@ -10,7 +10,7 @@ from imutils import contours
 DIGITS = {}
 DIGITS_BOOL = {}
 REGION_CACHE = {}
-BASE_RES = (100,100)
+BASE_RES = (50, 50)
 
 filenames = ["0","1","2","3","4","5","6","7","8","9"]
 def get_template_digits():
@@ -68,10 +68,10 @@ def extract_digits(img, cachekey, template=False, length=None, thresh=80):
     """
     expects image as an np array that is in BGR.
     """
-    res = ""    
-    img = np.array(img)
+    result = ""    
+    
     ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ret, ref = cv2.threshold(ref, thresh, 255, cv2.THRESH_BINARY)
+    ret, ref = cv2.threshold(ref, thresh, 255, cv2.THRESH_BINARY)    
     
     if not REGION_CACHE.get(cachekey):    
         good_rects = []
@@ -83,16 +83,12 @@ def extract_digits(img, cachekey, template=False, length=None, thresh=80):
         REGION_CACHE[cachekey] = good_rects
             
     rects = REGION_CACHE[cachekey]
-    first = True
+    
     for x, y, w, h in rects:        
-        orig_roi = ref[y:y + h, x:x + w]
-        if orig_roi.shape[-1] < 10:
-            continue
-        roi = imutils.resize(orig_roi, height=BASE_RES[1])
-        if roi.shape[-1] > 150:
-            continue
-        res += extract_digit(roi, template=template)
+        orig_roi = ref[y:y + h, x:x + w]        
+        result += extract_digit(orig_roi, template=template)
         first = False
-    return res
+
+    return result
 
 get_template_digits()
