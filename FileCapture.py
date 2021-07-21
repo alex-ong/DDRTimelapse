@@ -20,6 +20,8 @@ class FileMgr():
                 
     def ImageCapture(self, rectangle, fileName):
         self.videoCheck(fileName)
+        if rectangle is None:
+            return self.imgBuf
         return self.imgBuf.crop([rectangle[0],
                                 rectangle[1],
                                 rectangle[0]+rectangle[2],
@@ -29,8 +31,8 @@ class FileMgr():
         if self.videoFile.isOpened():
             ret, cv2_im = self.videoFile.read()
             if ret:
-                cv2_im = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
-                self.imgBuf = Image.fromarray(cv2_im)
+                #cv2_im = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
+                self.imgBuf = cv2_im # bgr
                 self.frameCount += 1
                 if (self.frameCount % 1000 == 0):
                     print (self.frameCount, '{0:.2f}'.format(self.frameCount*100.0/self.totalFrames)+"% complete")
@@ -47,6 +49,7 @@ class FileMgr():
 imgCap = FileMgr()
 
 def ImageCapture(rectangle, filename=None):
+    """returns BGRA image"""
     global imgCap
     return imgCap.ImageCapture(rectangle,filename)
 

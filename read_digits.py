@@ -10,6 +10,7 @@ from imutils import contours
 DIGITS = {}
 DIGITS_BOOL = {}
 REGION_CACHE = {}
+BASE_RES = (100,100)
 
 filenames = ["0","1","2","3","4","5","6","7","8","9"]
 def get_template_digits():
@@ -21,8 +22,8 @@ def get_template_digits():
         c = imutils.grab_contours(refCnts)[0]
         (x, y, w, h) = cv2.boundingRect(c)
         roi = ref[y:y + h, x:x + w]
-        roi = cv2.resize(roi, (100, 100))
-        roi = imutils.resize(roi, height=100)
+        roi = cv2.resize(roi, BASE_RES)
+        roi = imutils.resize(roi, height=BASE_RES[1])
         DIGITS[filename] = roi
         DIGITS_BOOL[filename] = roi != 0
     return DIGITS
@@ -32,7 +33,7 @@ def extract_digit(img, template=True):
     # either do correlation based template matching, take the highest scoring digit
     # or simply XOR two thresholded binary images, and take the most similar
     # template matching is significantly slower but more reliable - not good for production
-    img = cv2.resize(img, (100, 100))
+    img = cv2.resize(img, BASE_RES)
     scores = []
     score = 0
     if not DIGITS:
@@ -63,11 +64,12 @@ def extract_digit(img, template=True):
     
 
 
-def extract_digits(img, cachekey, template=True, length=None, thresh=80):
+def extract_digits(img, cachekey, template=False, length=None, thresh=80):
+    """
+    expects image as an np array that is in BGR.
+    """
     res = ""    
-    img = np.array(img) 
-    # Convert RGB to BGR 
-    img = img[:, :, ::-1].copy() 
+    img = np.array(img)
     ref = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, ref = cv2.threshold(ref, thresh, 255, cv2.THRESH_BINARY)
     
@@ -86,7 +88,7 @@ def extract_digits(img, cachekey, template=True, length=None, thresh=80):
         orig_roi = ref[y:y + h, x:x + w]
         if orig_roi.shape[-1] < 10:
             continue
-        roi = imutils.resize(orig_roi, height=100)
+        roi = imutils.resize(orig_roi, height=BASE_RES[1])
         if roi.shape[-1] > 150:
             continue
         res += extract_digit(roi, template=template)
