@@ -1,3 +1,5 @@
 /__pycache__/FileCapture.cpython-37.pyc
 /__pycache__/
 /[0-9]*-[0-9]*-[0-9]*/
+/202*.mp4
+/202*.wav
