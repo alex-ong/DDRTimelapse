@@ -1,0 +1,1 @@
+Place these scripts in whichever folder your OBS folder writes video files to
